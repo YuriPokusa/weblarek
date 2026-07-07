@@ -1,4 +1,4 @@
-import { IApi, IOrder, IOrderResult, IProductList } from '../../types';
+import { IApi, IOrder, IOrderResult, IProductList } from '../types';
 
 export class LarekApi {
     constructor(private api: IApi) {}

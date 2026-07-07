@@ -1,60 +1,57 @@
 import './scss/styles.scss';
-import { AppState } from './components/models/AppState';
-import { Order } from './components/models/Order';
-import { Product } from './components/models/Product';
-
-
-const appState = new AppState();
-
-/*const product = new Product({
-    id: '',
-    title: '',
-    description: '',
-    image: '',
-    category: '',
-    price: null
-});*/
-
-/*const order = new Order({
-    payment: '',
-    address: '',
-    email: '',
-    phone: '',
-    items: []
-});*/
+import { Basket } from './components/models/Basket';
+import { Buyer } from './components/models/Buyer';
+import { Products } from './components/models/Products';
+import { LarekApi } from './components/LarekApi';
+import { Api } from './components/base/Api';
+import { API_URL } from './utils/constants';
 
 import { apiProducts } from './utils/data';
 
-console.log('=== setCatalog ===');
-appState.setCatalog(apiProducts.items);
-console.log(appState.catalog);
+const products = new Products();
+products.setItems(apiProducts.items);
+console.log('Все товары:',products.getItems());
+console.log('Товар по id:', products.getItemById(apiProducts.items[0].id));
+products.setPreview(apiProducts.items[0]);
+console.log('Предпросмотр товара:', products.getPreview());
 
-console.log('=== addToBasket ===');
-appState.addToBasket(apiProducts.items[0]);
-console.log(appState.basket);
+const basket = new Basket();
 
-console.log('=== removeFromBasket ===');
-appState.removeFromBasket(apiProducts.items[0].id);
-console.log(appState.basket);
+basket.addToBasket(apiProducts.items[0]);
+console.log('Товары в корзине:', basket.getItems());
 
-console.log('=== setOrderField ===');
-appState.setOrderField('address', 'Москва');
-appState.setOrderField('payment', 'card');
-console.log(appState.order);
+basket.removeFromBasket(apiProducts.items[0].id);
+console.log('Товары в корзине после удаления:', basket.getItems());
 
-console.log('=== validateOrder ===');
-console.log(appState.validateOrder());
+basket.clear();
+console.log('Товары в корзине после очистки:', basket.getItems());
 
-const product = new Product(apiProducts.items[0]);
-console.log(product);
+const buyer = new Buyer();
+buyer.setField('payment', 'card');
+buyer.setField('address', 'Москва');
+buyer.setField('email', 'test@test.ru');
+buyer.setField('phone', '+79990001122');
 
-const order = new Order({
-    payment: 'card',
-    address: 'Москва',
-    email: 'test@test.ru',
-    phone: '+79990001122',
-    items: ['1']
+console.log('Данные покупателя:', buyer.getData());
+
+console.log('Валидация заказа:',    buyer.validate());
+
+buyer.clear();
+
+console.log('Данные покупателя после очистки:', buyer.getData());
+
+const api = new Api(API_URL);
+
+const larekApi = new LarekApi(api);
+
+larekApi.getProductList()
+.then((data) => {
+    products.setItems(data.items);
+    console.log('Каталог с сервера:', products.getItems());
+})
+.catch((err) => {
+    console.log('Ошибка при получении каталога:', err);
 });
 
-console.log(order);
-console.log(order.validateOrder());
+
+

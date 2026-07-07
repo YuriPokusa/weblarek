@@ -98,10 +98,12 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
-##### Данные
+## Данные
+### Интерфейсы
 Для хранения и обработки данных приложения используются следующие интерфейсы.
+
 Интерфейс IProduct.
-Описывает товар, получаемый с сервера и отображаемый в каталоге.
+Описывает данные одного товара каталога.
 interface IProduct {
     id: string;
     title: string;
@@ -121,15 +123,20 @@ price - цена товара.
 Интерфейс IBasket.
 Содержит список товаров, которые выбрал покупатель.
 interface IBasket {
-items: string[];
+items: IProduct[];
 }
+
 Поля интерфейса:
-items - массив идентификаторов товаров.
+items - массив товаров.
+
+Тип TPayment. 
+Используется в интерфейсах IBuyer и IOrder.
+type TPayment = 'card' | 'cash' | '';
 
 Интерфейс IBuyer.
 Содержит данные покупателя.
 interface IBuyer {
-    payment: 'card'|'cash'|'';
+    payment: TPayment;
     address: string;
     email: string;
     phone: string;
@@ -143,7 +150,7 @@ phone - телефон покупателя.
 Интерфейс IOrder.
 Содержит данные покупателя и корзины, и отправляется на сервер.
 interface  IOrder{
-    payment: 'card'|'cash'|'';
+    payment: TPayment;
     address: string;
     email: string;
     phone: string;
@@ -160,66 +167,70 @@ items - массив идентификаторов товаров.
 Интерфейс IOrderResult.
 Описывает ответ сервера после оформления заказа.
 interface  IOrderResult{
-    id: string[];
+    orderId: string;
     total: number;
 }
 
 Поля интерфейса:
-id - идентификатор купленных товаров,
+orderId - идентификатор оформленного заказа,
 total - общая стоимость купленных товаров.
 
-###### Модели данных.
+### Модели данных.
 Модели данных отвечают за хранение, изменение и предоставление данных другим слоям приложения.
 
-Класс AppState.
+Класс Basket.
 
-Хранит текущее состояние приложения.
+Хранит текущее состояние корзины.
 
 Поля класса:
-catalog: IProduct[] - список товаров,
-basket: string[] - список товаров выбранных для покупки,
-order: Partial<IOrder> - данные оформляемого заказа.
+basket: IBasket — текущее содержимое корзины.
 
 Методы класса:
 
-setCatalog(items: IProduct[]): void - сохраняет список товара,
-addToBasket(product: IProduct): void — добавляет товар в корзину,
+addToBasket(product: IProduct): void - добавляет товар в корзину,
 removeFromBasket(id: string): void — удаляет товар из корзины,
-getBasketTotal(): number — вычисляет общую стоимость товаров,
-setOrderField(field: keyof IOrder, value: string): void — обновляет поле заказа;
-validateOrder(): boolean — проверяет корректность заполнения данных заказа и возвращает результат проверки.
+clear(): void - очищает корзину,
+getItems(): IProduct[] - возвращает массив товаров, находящихся в корзине.
 
-Класс Product
+Класс Products
 
-Модель товара.
-
-Поля
-
-id: string
-title: string
-description: string
-image: string
-category: string
-price: number || null
-
-Используется для хранения информации о конкретном товаре и предоставления данных покупателю.
-
-Класс Order
-
-Модель заказа.
+Класс Products отвечает за хранение каталога товаров и выбранного для просмотра товара.
 
 Поля
 
-items: string[]
-payment: string
+items: IProduct[] - каталог товаров;
+preview: IProduct | null - товар выбранный для просмотра;
+
+Методы:
+setItems(items: IProduct[]): void - сохраняет массив товаров;
+getItems(): IProduct[] - возвращает массив товаров;
+getItemById(id) - возвращает товар по ID;
+setPreview(product: IProduct): void - сохраняет товар для просмотра;
+getPreview(): IProduct | null - возвращает выбранный товар.
+
+Используется для хранения каталога товаров, поиска товара по идентификатору и хранения товара, выбранного для детального просмотра.
+
+Класс Buyer
+
+Отвечает за хранение данных покупателя и их проверку.
+
+Поля
+
+payment: TPayment
 address: string
 email: string
 phone: string
-total: number
 
-Используется для хранения данных покупателя, списка товаров и итоговой стоимости заказа перед отправкой данных на сервер.
+Методы:
 
-####### Слой коммуникации.
+setField(field: keyof IBuyer, value: string): void - сохраняет значение указанного поля.
+getData(): IBuyer - возвращает объект покупателя.
+clear(): void - очищает данные покупателя.
+validate(): IBuyerErrors - выполняет проверку заполнения полей и возвращает ошибки.
+
+Используется для хранения данных покупателя и их проверки перед оформлением заказа.
+
+### Слой коммуникации.
 
 Класс LarekApi.
 
@@ -235,7 +246,7 @@ api: IApi — экземпляр класса Api, используемый дл
 
 Методы:
 
-getProductList(): Promise<IProductResponse> — получает с сервера список товаров.
+getProductList(): Promise<IProductList> — получает с сервера список товаров.
 
 orderProducts(order: IOrder): Promise<IOrderResult> — отправляет данные заказа на сервер и возвращает результат оформления заказа.
 

@@ -15,30 +15,35 @@ export interface IProduct {
 }
 
 export interface IBasket {
-items: string[];
+    items: IProduct[];
 }
+
+export type TPayment = 'card' | 'cash' | '';
 
 export interface IBuyer {
-    payment: 'card'|'cash'|'';
+    payment: TPayment;
     address: string;
     email: string;
     phone: string;
 }
 
-export interface IOrder {
-    payment: 'card'|'cash'|'';
-    address: string;
-    email: string;
-    phone: string;
+export interface IBuyerErrors {
+    payment?: string;
+    address?: string;
+    email?: string;
+    phone?: string;
+}
+
+export interface IProductList {
+    total: number;
+    items: IProduct[];
+}
+
+export interface IOrder extends IBuyer {
     items: string[];
 }
 
 export interface IOrderResult {
     id: string;
     total: number;
-}
-
-export interface IProductList {
-    total: number;
-    items: IProduct[];
 }
