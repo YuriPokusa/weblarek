@@ -17,14 +17,19 @@ console.log('Предпросмотр товара:', products.getPreview());
 
 const basket = new Basket();
 
-basket.addToBasket(apiProducts.items[0]);
-console.log('Товары в корзине:', basket.getItems());
+    basket.addToBasket(apiProducts.items[0]);
+    basket.addToBasket(apiProducts.items[1]);
+    basket.addToBasket(apiProducts.items[2]);
 
-basket.removeFromBasket(apiProducts.items[0].id);
-console.log('Товары в корзине после удаления:', basket.getItems());
+    console.log('Товары:', basket.getItems());
+    console.log('Количество:', basket.getCount());
+    console.log('Стоимость:', basket.getTotal());
+    console.log(
+    'Есть первый товар:',
+    basket.hasItem(apiProducts.items[0].id)
+);
 
-basket.clear();
-console.log('Товары в корзине после очистки:', basket.getItems());
+
 
 const buyer = new Buyer();
 buyer.setField('payment', 'card');
@@ -39,6 +44,7 @@ console.log('Валидация заказа:',    buyer.validate());
 buyer.clear();
 
 console.log('Данные покупателя после очистки:', buyer.getData());
+console.log('Валидация пустой модели:', buyer.validate());
 
 const api = new Api(API_URL);
 
@@ -53,5 +59,4 @@ larekApi.getProductList()
     console.log('Ошибка при получении каталога:', err);
 });
 
-
-
+    

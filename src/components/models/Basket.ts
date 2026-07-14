@@ -1,36 +1,35 @@
-import { IBasket, IProduct } from "../../types";
+import { IProduct } from "../../types";
 export class Basket {
-    protected basket: IBasket = {
-        items: []
-    };
+    protected items: IProduct[] = [];
     
     constructor() {}
 
     addToBasket(product: IProduct): void {
-        this.basket.items.push(product);
+        this.items.push(product);
     }
 
     removeFromBasket(id: string): void {
-        this.basket.items = this.basket.items.filter(item => item.id !== id);
+        this.items = this.items.filter(item => item.id !== id);
     }
 
     clear(): void {
-        this.basket.items = [];
+        this.items = [];
     }
 
     getTotal(): number {
-        return this.basket.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
+        return this.items.reduce((sum, item) => sum + (item.price ?? 0), 0);
     }
 
     getCount(): number {
-        return this.basket.items.length;
+        return this.items.length;
     }
 
     hasItem(id: string): boolean {
-        return this.basket.items.some(item => item.id === id);
+        return this.items.some(item => item.id === id);
     }
 
     getItems(): IProduct[] {
-        return this.basket.items;
+        return this.items;
     }
+
 }

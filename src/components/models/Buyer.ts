@@ -1,13 +1,28 @@
-import { IBuyer, IBuyerErrors } from "../../types";
+import { IBuyer, IBuyerErrors, TPayment } from "../../types";
 
 export class Buyer {
-    payment: 'card'|'cash'|''= '';
-    address: string = '';
-    email: string = '';
-    phone: string = '';
+    protected payment: TPayment = '';
+    protected address: string = '';
+    protected email: string = '';
+    protected phone: string = '';
 
     setField(field: keyof IBuyer, value: string): void {
-        this[field] = value as never;
+        switch(field) {
+            case 'payment':
+            if (value === 'card' || value === 'cash' || value === '') {
+                this.payment = value;
+            }
+            break;
+            case 'address':
+                this.address = value;
+                break;
+            case 'email':
+                this.email = value;
+                break;
+            case 'phone':
+                this.phone = value;
+                break;
+        }
     }
 
     getData(): IBuyer {
