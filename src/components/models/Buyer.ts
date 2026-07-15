@@ -9,7 +9,7 @@ export class Buyer {
     setField(field: keyof IBuyer, value: string): void {
         switch(field) {
             case 'payment':
-            if (value === 'card' || value === 'cash' || value === '') {
+            if (value === 'card' || value === 'cash') {
                 this.payment = value;
             }
             break;

@@ -29,7 +29,20 @@ const basket = new Basket();
     basket.hasItem(apiProducts.items[0].id)
 );
 
+    basket.removeFromBasket(apiProducts.items[1].id);
+    console.log('После удаления второго товара');
+    console.log('Товары после удаления:', basket.getItems());
+    console.log('Количество после удаления:', basket.getCount());
+    console.log('Стоимость после удаления:', basket.getTotal());
+    console.log(
+    'Есть второй товар:',
+    basket.hasItem(apiProducts.items[1].id));
 
+    basket.clear();
+    console.log('После очистки корзины');
+    console.log('Товары после очистки:', basket.getItems());
+    console.log('Количество после очистки:', basket.getCount());
+    console.log('Стоимость после очистки:', basket.getTotal());
 
 const buyer = new Buyer();
 buyer.setField('payment', 'card');
